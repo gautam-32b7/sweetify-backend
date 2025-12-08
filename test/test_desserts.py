@@ -69,3 +69,23 @@ def test_list_desserts(test_dessert):
         'price': 362,
         'image_url': 'https://ik.imagekit.io/psrcaqvky/waffle_6kr5MDkWi.jpg'
     }]
+
+
+# Test: Retrieve a single dessert by its ID
+def test_retrieve_dessert(test_dessert):
+    response = client.get('/desserts/e8919dc6-305c-4db2-b8da-30c64e874704')
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {
+        'id': 'e8919dc6-305c-4db2-b8da-30c64e874704',
+        'dessert_name': 'Waffle with Berries',
+        'description': 'Crispy golden waffle topped with fresh mixed berries',
+        'price': 362,
+        'image_url': 'https://ik.imagekit.io/psrcaqvky/waffle_6kr5MDkWi.jpg'
+    }
+
+
+# Test: Retrieve a single dessert by its ID (Not found)
+def test_retrieve_dessert_not_found(test_dessert):
+    response = client.get('/desserts/e8919dc6-305c-4db2-b8da-30c64e874108')
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {'detail': 'Dessert not found'}
