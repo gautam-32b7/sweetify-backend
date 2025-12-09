@@ -47,7 +47,7 @@ def test_dessert():
     # After the test runs, delete all desserts to reset the database
     yield dessert_model
     with engine.connect() as connection:
-        connection.execute(text('DELETE FROM desserts;'))
+        connection.execute(text('DELETE FROM desserts'))
         connection.commit()
 
 
@@ -87,5 +87,27 @@ def test_retrieve_dessert(test_dessert):
 # Test: Retrieve a single dessert by its ID (Not found)
 def test_retrieve_dessert_not_found(test_dessert):
     response = client.get('/desserts/e8919dc6-305c-4db2-b8da-30c64e874108')
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {'detail': 'Dessert not found'}
+
+
+# Test: Create a new dessert
+def test_create_dessert(test_dessert):
+    pass
+
+
+# Test: Delete a dessert by its ID
+def test_delete_dessert(test_dessert):
+    response = client.delete('/dessert/e8919dc6-305c-4db2-b8da-30c64e874704')
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    db = testing_local_session()
+    model = db.query(Dessert).filter(
+        Dessert.id == 'e8919dc6-305c-4db2-b8da-30c64e874704').first()
+    assert model is None
+
+
+# Test: Delete a dessert by its ID (Not Found)
+def test_delete_dessert_not_found(test_dessert):
+    response = client.delete('/dessert/e8919dc6-305c-4db2-b8da-30c64e874108')
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json() == {'detail': 'Dessert not found'}
